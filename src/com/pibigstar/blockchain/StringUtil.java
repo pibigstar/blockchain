@@ -1,4 +1,4 @@
-package noobchain;
+package com.pibigstar.blockchain;
 import java.security.MessageDigest;
 
 import com.google.gson.GsonBuilder;
