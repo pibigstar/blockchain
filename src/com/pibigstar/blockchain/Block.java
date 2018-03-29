@@ -12,13 +12,13 @@ public class Block {
 	public String hash;
 	//上一个区块的hash值
 	public String previousHash; 
-	//每个区块存放的信息，这里我们存放的是一串字符串
-	public String data; 
+	//每个区块存放的信息
+	public String merkleRoot;
 	//时间戳
 	public long timeStamp; 
 	//挖矿者的工作量证明
 	public int nonce;
-	//存放我们的交易信息
+	//我们的交易信息最后会转化成merkleRoot
 	public ArrayList<Transaction> transactions = new ArrayList<Transaction>(); 
 
 	//构造  
@@ -34,14 +34,14 @@ public class Block {
 		String calculatedhash = StringUtil.applySha256( 
 				previousHash +
 				Long.toString(timeStamp) +
-				Integer.toString(nonce) + 
-				data 
-				);
+				Integer.toString(nonce) + merkleRoot);
 		return calculatedhash;
 	}
 
 	//挖矿
 	public void mineBlock(int difficulty) {
+		//
+		merkleRoot = StringUtil.getMerkleRoot(transactions);
 		//目标值，difficulty越大，下面计算量越大
 		String target = StringUtil.getDificultyString(difficulty);
 		//difficulty如果为5，那么target则为 00000

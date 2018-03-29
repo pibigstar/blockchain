@@ -3,6 +3,8 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 /**
  * 创建区块链
  * @author pibigstar
@@ -18,24 +20,29 @@ public class BlockChain {
 	//最低的交易金额
 	public static float minimumTransaction = 0.1f;
 
-
-	public static Wallet walletA;
-	public static Wallet walletB;
+	//交易信息
 	public static Transaction genesisTransaction;
-
-
 
 	public static void main(String[] args) {	
 		//创建区块链
 		//createChain();
 
 		//交易测试
+		transaction();
+
+	}
+
+	/**
+	 * 交易测试
+	 */
+	private static void transaction() {
+
 		//将我们的block添加到区块链ArrayList:
-		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()); //设置Bouncey作为安全提供程序
+		Security.addProvider(new BouncyCastleProvider()); //设置Bouncey作为安全提供程序
 
 		//创建钱包
-		walletA = new Wallet();
-		walletB = new Wallet();		
+		Wallet walletA = new Wallet();
+		Wallet walletB = new Wallet();		
 		Wallet coinbase = new Wallet();
 
 		//创建创世交易（第一笔交易），向walletA发送100个星币:
@@ -75,8 +82,8 @@ public class BlockChain {
 		System.out.println("钱包A的 金钱为:  " + walletA.getBalance());
 		System.out.println("钱包B的 金钱为:  " + walletB.getBalance());
 
+		//验证合法性
 		isChainValid();
-
 	}
 
 
@@ -84,18 +91,20 @@ public class BlockChain {
 
 	private static void createChain() {
 		System.out.println("正在创建第一个区块链....... ");
-		//addBlock(new Block("我是第一个区块链", "0"));//创世块
+		addBlock(new Block("0"));//创世块
 
 		System.out.println("正在创建第二个区块链....... ");
-		//addBlock(new Block("我是第二个区块链",blockchain.get(blockchain.size()-1).hash));
+		addBlock(new Block(blockchain.get(blockchain.size()-1).hash));
 
 		System.out.println("正在创建第三个区块链.......");
-		//addBlock(new Block("我是第三个区块链",blockchain.get(blockchain.size()-1).hash));	
-
-		System.out.println("区块链是否有效的: " + isChainValid());
-
+		addBlock(new Block(blockchain.get(blockchain.size()-1).hash));	
+		
 		String blockchainJson = StringUtil.getJson(blockchain);
 		System.out.println(blockchainJson);
+		//注意，这里因为只是创建区块并没有在区块中添加任何一个事务
+		//所以genesisTransaction.outputs.get(0).id 会为空指针
+		//isChainValid();
+		
 	}
 
 
@@ -108,10 +117,10 @@ public class BlockChain {
 		Block currentBlock = null; 
 		Block previousBlock = null;
 		String hashTarget = new String(new char[difficulty]).replace('\0', '0');
-
-		HashMap<String,TransactionOutput> tempUTXOs = new HashMap<String,TransactionOutput>(); //a temporary working list of unspent transactions at a given block state.
+		
+		//给定块状态下未使用事务的临时工作列表。
+		HashMap<String,TransactionOutput> tempUTXOs = new HashMap<String,TransactionOutput>(); 
 		tempUTXOs.put(genesisTransaction.outputs.get(0).id, genesisTransaction.outputs.get(0));
-
 
 		//循环区块链检查散列:
 		for(int i=1; i < blockchain.size(); i++) {
@@ -119,12 +128,12 @@ public class BlockChain {
 			previousBlock = blockchain.get(i-1);
 			//比较注册散列和计算散列:
 			if(!currentBlock.hash.equals(currentBlock.calculateHash()) ){
-				System.out.println("Current Hashes not equal");			
+				System.out.println("当前的hash与预期的不相等");			
 				return false;
 			}
 			//比较以前的散列和注册的先前的散列
 			if(!previousBlock.hash.equals(currentBlock.previousHash) ) {
-				System.out.println("Previous Hashes not equal");
+				System.out.println("当前的previousHash不等于上一个区块的hash");
 				return false;
 			}
 			//检查哈希是否被使用

@@ -95,6 +95,12 @@ public class StringUtil {
 		return Base64.getEncoder().encodeToString(key.getEncoded());
 	}
 
+	/**
+	 * 防止一个区块中存在过多的交易二导致大量的hash计算，
+	 * 所以我们将交易计算出merkleRoot
+	 * @param transactions 交易列表
+	 * @return
+	 */
 	public static String getMerkleRoot(ArrayList<Transaction> transactions) {
 		int count = transactions.size();
 
