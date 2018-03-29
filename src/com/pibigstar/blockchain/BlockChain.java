@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder;
  * @author pibigstar
  *
  */
-public class NoobChain {
+public class BlockChain {
 	//存放所有的区块集合
 	public static ArrayList<Block> blockchain = new ArrayList<Block>();
 	public static int difficulty = 5;//挖矿的难度，数字越大越难
