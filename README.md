@@ -1,6 +1,6 @@
 # 用java写一个简单的区块链
 
-** [博客地址:https://blog.csdn.net/junmoxi/article/details/79740930](https://blog.csdn.net/junmoxi/article/details/79740930)**
+**[博客地址:https://blog.csdn.net/junmoxi/article/details/79740930](https://blog.csdn.net/junmoxi/article/details/79740930)**
 
 # 目前支持的功能
 - 允许用户创建钱包
